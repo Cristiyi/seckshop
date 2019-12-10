@@ -1,9 +1,19 @@
+/**
+ * @Author: cristi
+ * @Description:
+ * @File:  route.go
+ * @Version: 1.0.0
+ * @Date: 2019/12/10 0010 14:08
+ */
+
 package route
 
 import (
 	"github.com/kataras/iris/mvc"
 	"seckshop/controllers/backend"
 	"github.com/kataras/iris"
+	"seckshop/controllers/fronted"
+
 	//"github.com/kataras/iris/mvc"
 	"net/http"
 )
@@ -11,6 +21,7 @@ func InitRouter(app *iris.Application) {
 	//app.Use(CrossAccess)
 	bathPath := "/api/v1"
 	mvc.New(app.Party(bathPath+"/admin/product")).Handle(backend.NewProductController())
+	mvc.New(app.Party(bathPath+"/fronted/user")).Handle(fronted.NewUserController())
 }
 //bathPath := "/api/v1"
 

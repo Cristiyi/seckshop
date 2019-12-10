@@ -1,7 +1,7 @@
 {
   "Port": "8848",
   "DBUserName": "root",
-  "DBPassword": "rootroot",
+  "DBPassword": "root",
   "DBIp": "127.0.0.1",
   "DBPort": "3306",
   "DBName": "seckshop"

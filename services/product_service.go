@@ -7,6 +7,7 @@ import (
 
 type ProductService interface {
 	List(m map[string]interface{}) (result models.Result)
+	Insert(m map[string]interface{}) (result models.Result)
 }
 
 type productService struct {
@@ -27,3 +28,15 @@ func (p *productService) List(m map[string]interface{}) (result models.Result){
 	result.Msg = "success"
 	return
 }
+
+func (p *productService) Insert(m map[string]interface{}) (result models.Result) {
+	goodId, err := p.Repository.Insert(m)
+	if err != nil {
+		panic("insert error")
+	}
+	result.Data = goodId
+	result.Code = 200
+	result.Msg = "添加成功"
+	return
+}
+

@@ -18,5 +18,6 @@ require (
 	github.com/xormplus/builder v0.0.0-20190724032102-0ee351fedce9 // indirect
 	github.com/xormplus/core v0.0.0-20190724072625-00f5a85ad6e0 // indirect
 	github.com/xormplus/xorm v0.0.0-20190926190243-42377f593eb1
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 	gopkg.in/flosch/pongo2.v3 v3.0.0-20141028000813-5e81b817a0c4 // indirect
 )

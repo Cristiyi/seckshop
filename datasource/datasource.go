@@ -25,7 +25,7 @@ func init() {
 
 	//创建表
 
-	err = engine.Sync2(new(models.Product))
+	err = engine.Sync2(new(models.Product), new(models.Order), new(models.User))
 
 	if err != nil {
 		panic(err)
