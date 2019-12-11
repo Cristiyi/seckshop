@@ -66,3 +66,20 @@ func (g *UserController) PostInsert() (result models.Result) {
 	return g.Service.Insert(m)
 
 }
+
+func (u *UserController) PostLogin() (result models.Result) {
+	r := u.Ctx.Request()
+	tel := r.PostFormValue("tel")
+	if tel == "" {
+		result.Msg = "手机号不能为空"
+		result.Code = 500
+		return
+	}
+	password := r.PostFormValue("password")
+	if password == "" {
+		result.Msg = "密码不能为空"
+		result.Code = 500
+		return
+	}
+	return u.Service.CheckLogin(tel, password)
+}

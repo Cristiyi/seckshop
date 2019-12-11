@@ -22,6 +22,7 @@ func InitRouter(app *iris.Application) {
 	bathPath := "/api/v1"
 	mvc.New(app.Party(bathPath+"/admin/product")).Handle(backend.NewProductController())
 	mvc.New(app.Party(bathPath+"/fronted/user")).Handle(fronted.NewUserController())
+	mvc.New(app.Party(bathPath+"/fronted/product")).Handle(fronted.NewProductController())
 }
 //bathPath := "/api/v1"
 

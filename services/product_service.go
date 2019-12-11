@@ -8,6 +8,7 @@ import (
 type ProductService interface {
 	List(m map[string]interface{}) (result models.Result)
 	Insert(m map[string]interface{}) (result models.Result)
+	GetProduct(productId int64) (result models.Result)
 }
 
 type productService struct {
@@ -37,6 +38,23 @@ func (p *productService) Insert(m map[string]interface{}) (result models.Result)
 	result.Data = goodId
 	result.Code = 200
 	result.Msg = "添加成功"
+	return
+}
+
+func (p *productService) GetProduct(productId int64) (result models.Result) {
+	hasProduct, product, err := p.Repository.GetProduct(productId)
+	if err != nil {
+		panic("error")
+	}
+	if hasProduct == false {
+		result.Data = nil
+		result.Code = 205
+		result.Msg = "暂无数据"
+		return
+	}
+	result.Data = product
+	result.Code = 200
+	result.Msg = "执行成功"
 	return
 }
 

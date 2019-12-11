@@ -9,6 +9,7 @@ import (
 type ProductRepository interface {
 	List(m map[string]interface{})(total int, products []models.Product)
 	Insert(m map[string]interface{}) (goodId int64, err error)
+	GetProduct(productId int64) (hasProduct bool, product models.Product, err error)
 }
 
 func NewProductRepository() ProductRepository {
@@ -43,5 +44,13 @@ func (p productRepository) Insert(m map[string]interface{}) (goodId int64, err e
 		panic("insert error")
 	}
 	goodId = product.ID
+	return
+}
+
+func (p productRepository) GetProduct(productId int64) (hasProduct bool, product models.Product, err error) {
+	hasProduct, err = engine.Where("id = ?", productId).Get(&product)
+	if err != nil {
+		panic("select error")
+	}
 	return
 }

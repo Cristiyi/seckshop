@@ -12,11 +12,14 @@ import (
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
 	"seckshop/models"
+	"github.com/dgrijalva/jwt-go"
+	"time"
 )
 
 type UserRepo interface {
 	Insert(m map[string]interface{}) (userId int64, err error)
 	CheckTel(tel string) (isReg bool, err error)
+	CheckLogin(tel string, password string) (has bool, token string, msg string)
 }
 
 func NewUserRepo() UserRepo {
@@ -62,4 +65,42 @@ func(u userRepo) CheckTel(tel string) (isReg bool, err error) {
 //生成password
 func GeneratePassword(userPassword string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
+}
+
+//登录逻辑
+func(u userRepo) CheckLogin(tel string, password string) (has bool, token string, msg string) {
+
+	user := new(models.User)
+	has, err := engine.Where("tel=?", tel).Get(user)
+	if err != nil {
+		panic("select user error")
+	}
+	if !has {
+		return false, "", "未找到用户"
+	}
+
+	getPassword := ValidatePassword(password, user.HashPassword);
+	if !getPassword {
+		return false, "", "密码错误，请重新输入"
+	}
+
+	tokenObj := jwt.New(jwt.SigningMethodHS256)
+	claims := make(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
+	claims["iat"] = time.Now().Unix()
+	tokenObj.Claims = claims
+	token, err = tokenObj.SignedString([]byte("secret"))
+
+	if err != nil {
+		panic("token error")
+	}
+	msg = "登陆成功"
+	return
+}
+
+func ValidatePassword(password string, hashedPassword string) (isRight bool) {
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
+		return false
+	}
+	return true
 }

@@ -8,6 +8,7 @@ type User struct {
 	NickName		string `xorm:"nickname varchar(50)"`
 	UserName		string `xorm:"username varchar(50)" index`
 	HashPassword    string `xorm:"password varchar(255)"`
+	Token 			string `xorm:"token varchar(255)"`
 	CreatedAt		time.Time `xorm:"created"`
 	UpdatedAt 		time.Time `xorm:"updated"`
 	DeletedAt 		time.Time `xorm:"deleted"`
