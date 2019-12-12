@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"seckshop/conf"
 	"seckshop/route"
 )
@@ -10,7 +10,8 @@ import (
 func main() {
 	flag.Parse()
 	app := newApp()
-	route.InitRouter(app)
+	//route.InitRouter(app)
+	route.Register(app)
 	err := app.Run(iris.Addr(":"+conf.Sysconfig.Port), iris.WithoutServerError(iris.ErrServerClosed))
 	if err != nil {
 		panic(err)

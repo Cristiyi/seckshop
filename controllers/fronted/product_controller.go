@@ -1,14 +1,13 @@
 package fronted
 
 import (
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"seckshop/services"
 	"seckshop/models"
 	"github.com/spf13/cast"
 )
 
 type ProductController struct {
-	Ctx		iris.Context
 	Service services.ProductService
 }
 
@@ -16,13 +15,18 @@ func NewProductController() *ProductController {
 	return &ProductController{Service:services.NewProductService()}
 }
 
-func (g *ProductController) PostGet() (result models.Result) {
-	r := g.Ctx.Request()
+func Detail(ctx iris.Context) () {
+	result := new(models.Result)
+	p := NewProductController()
+	r := ctx.Request()
 	if r.PostFormValue("id") == "" {
 		result.Msg = "id不能为空"
-		result.Code = -1
+		result.Code = 500
+		result.Data = nil
+		ctx.JSON(&result)
 		return
 	}
 	productId := cast.ToInt64(r.PostFormValue("id"))
-	return g.Service.GetProduct(productId)
+	//return p.Service.GetProduct(productId)
+	_, _ = ctx.JSON(p.Service.GetProduct(productId))
 }

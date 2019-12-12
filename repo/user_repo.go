@@ -82,7 +82,7 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 
 	tokenObj := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(10000)).Unix()
 	claims["iat"] = time.Now().Unix()
 	tokenObj.Claims = claims
 	token, err = middleware.CreateToken(user.ID)
@@ -97,7 +97,7 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 		fmt.Println(err.Error())
 		panic("token error")
 	}
-	middleware.CheckToken(token, "secret")
+	//middleware.CheckToken(token, "secret")
 	if affected == 0 {
 		return false, "", "登录失败"
 	}
