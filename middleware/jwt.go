@@ -10,6 +10,7 @@ package middleware
 
 import (
 	//"fmt"
+	//"fmt"
 	"github.com/dgrijalva/jwt-go"
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 	"seckshop/models"
@@ -78,18 +79,26 @@ func ParseToken(ctx iris.Context) {
 		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "need token"})
 		return
 	}
-	tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (i interface{}, err error) {
-		if err != nil {
-			ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error"})
-			return
+	//tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, err error) {
+	//	if err != nil {
+	//		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error1"})
+	//		return
+	//	}
+	//	return []byte("secret"), nil
+	//})
+
+	tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error1"})
+			return nil, nil
 		}
-		return "secret", nil
+		return []byte("secret"), nil
 	})
 
-	////校验错误（基本）
-	//validErr := tokenObj.Claims.Valid()
-	//if validErr != nil {
-	//	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error"})
+	//校验错误（基本）
+	//validErr := tokenObj.Valid
+	//if validErr==false {
+	//	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error2"})
 	//	return
 	//}
 
@@ -100,7 +109,7 @@ func ParseToken(ctx iris.Context) {
 		ctx.Next()
 	}
 
-	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error"})
+	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error3"})
 	return
 
 }
