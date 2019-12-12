@@ -12,6 +12,7 @@ require (
 	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/iris-contrib/formBinder v5.0.0+incompatible // indirect
 	github.com/iris-contrib/middleware/cors v0.0.0-20191111233249-6e1f5f92190e // indirect
+	github.com/iris-contrib/middleware/jwt v0.0.0-20191111233249-6e1f5f92190e
 	github.com/json-iterator/go v1.1.6
 	github.com/kataras/iris v11.1.1+incompatible
 	github.com/spf13/cast v1.3.0

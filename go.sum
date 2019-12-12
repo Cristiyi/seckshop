@@ -72,6 +72,8 @@ github.com/iris-contrib/i18n v0.0.0-20171121225848-987a633949d0/go.mod h1:pMCz62
 github.com/iris-contrib/middleware v0.0.0-20191111233249-6e1f5f92190e h1:l9vzmAJ2F/WnXf+xLqSZHm2+brPXEsuWoUk8Wo79kA0=
 github.com/iris-contrib/middleware/cors v0.0.0-20191111233249-6e1f5f92190e h1:WOK9N/8zRc5Qzwes0Mm6nokCC4HB67evkit2YTReVNw=
 github.com/iris-contrib/middleware/cors v0.0.0-20191111233249-6e1f5f92190e/go.mod h1:7E7yJvJXYffknyXPaBTSKjniywyfrBvQNvsBvtTMzEY=
+github.com/iris-contrib/middleware/jwt v0.0.0-20191111233249-6e1f5f92190e h1:sWKNOtA9Z7cYwTjYcMtCxm9ISxLCKw8x4AfwS0VQd9E=
+github.com/iris-contrib/middleware/jwt v0.0.0-20191111233249-6e1f5f92190e/go.mod h1:cUmx1IdG2BaZAiiOmejO8cJJDWNxjT1YAl+fPbZXjtk=
 github.com/iris-contrib/schema v0.0.1 h1:10g/WnoRR+U+XXHWKBHeNy/+tZmM2kcAVGLOsz+yaDA=
 github.com/iris-contrib/schema v0.0.1/go.mod h1:urYA3uvUNG1TIIjOSCzHr9/LmbQo8LrOcOqfqxa4hXw=
 github.com/json-iterator/go v1.1.6 h1:MrUvLMLTMxbqFJ9kzlvat/rYZqZnW3u4wkLzWTaFwKs=

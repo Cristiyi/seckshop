@@ -9,8 +9,10 @@
 package repo
 
 import (
+	"fmt"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/bcrypt"
+	"seckshop/middleware"
 	"seckshop/models"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -61,12 +63,6 @@ func(u userRepo) CheckTel(tel string) (isReg bool, err error) {
 	isReg = has
 	return
 }
-
-//生成password
-func GeneratePassword(userPassword string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
-}
-
 //登录逻辑
 func(u userRepo) CheckLogin(tel string, password string) (has bool, token string, msg string) {
 
@@ -89,15 +85,31 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	claims["iat"] = time.Now().Unix()
 	tokenObj.Claims = claims
-	token, err = tokenObj.SignedString([]byte("secret"))
+	token, err = middleware.CreateToken(user.ID)
 
 	if err != nil {
 		panic("token error")
 	}
 	msg = "登陆成功"
+	user.Token = token
+	affected, err := engine.Id(user.ID).Cols("token").Update(user)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("token error")
+	}
+	middleware.CheckToken(token, "secret")
+	if affected == 0 {
+		return false, "", "登录失败"
+	}
 	return
 }
 
+//生成password
+func GeneratePassword(userPassword string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
+}
+
+//验证password
 func ValidatePassword(password string, hashedPassword string) (isRight bool) {
 	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
 		return false
