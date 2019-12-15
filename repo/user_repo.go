@@ -14,8 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"seckshop/middleware"
 	"seckshop/models"
-	"github.com/dgrijalva/jwt-go"
-	"time"
 )
 
 type UserRepo interface {
@@ -63,6 +61,7 @@ func(u userRepo) CheckTel(tel string) (isReg bool, err error) {
 	isReg = has
 	return
 }
+
 //登录逻辑
 func(u userRepo) CheckLogin(tel string, password string) (has bool, token string, msg string) {
 
@@ -79,14 +78,9 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 	if !getPassword {
 		return false, "", "密码错误，请重新输入"
 	}
-
-	tokenObj := jwt.New(jwt.SigningMethodHS256)
-	claims := make(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(10000)).Unix()
-	claims["iat"] = time.Now().Unix()
-	tokenObj.Claims = claims
-	token, err = middleware.CreateToken(user.ID)
-
+	token, err = middleware.CreateToken(*user)
+	fmt.Println(token)
+	fmt.Println(err)
 	if err != nil {
 		panic("token error")
 	}
@@ -94,8 +88,7 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 	user.Token = token
 	affected, err := engine.Id(user.ID).Cols("token").Update(user)
 	if err != nil {
-		fmt.Println(err.Error())
-		panic("token error")
+		fmt.Println("err", err)
 	}
 	//middleware.CheckToken(token, "secret")
 	if affected == 0 {

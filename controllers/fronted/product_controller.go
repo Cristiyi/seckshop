@@ -27,6 +27,5 @@ func Detail(ctx iris.Context) () {
 		return
 	}
 	productId := cast.ToInt64(r.PostFormValue("id"))
-	//return p.Service.GetProduct(productId)
 	_, _ = ctx.JSON(p.Service.GetProduct(productId))
 }

@@ -9,69 +9,39 @@
 package middleware
 
 import (
-	//"fmt"
-	//"fmt"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 	"seckshop/models"
+	"strings"
 	"time"
 	"github.com/kataras/iris/v12"
 )
 
-/**
- * 验证 jwt
- * @method JwtHandler
- */
-var JwtHandler = jwtmiddleware.New(jwtmiddleware.Config{
-	ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	},
-	SigningMethod: jwt.SigningMethodHS256,
+const JWTKEY = "9e95bf56a1e3dcb44a34ae7fc9034091"
 
-})
-
-
+//jwt Claim struct
+type Claims struct {
+	jwt.StandardClaims
+	UserId int64 `json:"user_id"`
+	UserName string `json:"username"`
+}
 
 //创建token
-func CreateToken(userId int64) (token string, err error) {
-
-	tokenObj := jwt.New(jwt.SigningMethodHS256)
-	claims := make(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
-	claims["iat"] = time.Now().Unix()
-	claims["userId"] = userId
-	tokenObj.Claims = claims
-	token, err = tokenObj.SignedString([]byte("secret"))
+func CreateToken(user models.User) (token string, err error) {
+	claims := &Claims{
+		UserId:   user.ID,
+		UserName: user.UserName,
+		StandardClaims: jwt.StandardClaims{
+			// In JWT, the expiry time is expressed as unix milliseconds
+			ExpiresAt: time.Now().Add(time.Hour*time.Duration(1)).Unix(),
+		},
+	}
+	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err = tokenObj.SignedString([]byte(JWTKEY))
 	return
-
 }
 
 //验证token
-//func CheckToken(ctx iris.Context) (isRight bool, err error){
-//
-//	tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (i interface{}, err error) {
-//		if err != nil {
-//			isRight = false
-//			return
-//		}
-//		return "secret", nil
-//	})
-//
-//	//校验错误（基本）
-//	err = tokenObj.Claims.Valid()
-//	if err != nil {
-//		return false, err
-//	}
-//
-//	finToken := tokenObj.Claims.(jwt.MapClaims)
-//	//校验下token是否过期
-//	succ := finToken.VerifyExpiresAt(time.Now().Unix(),true)
-//	fmt.Println("succ",succ)
-//	fmt.Println(finToken)
-//	return true, nil
-//
-//}
-
 func ParseToken(ctx iris.Context) {
 
 	tokenString := ctx.GetHeader("Authorization")
@@ -79,37 +49,31 @@ func ParseToken(ctx iris.Context) {
 		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "need token"})
 		return
 	}
-	//tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, err error) {
-	//	if err != nil {
-	//		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error1"})
-	//		return
-	//	}
-	//	return []byte("secret"), nil
-	//})
-
-	tokenObj, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error1"})
-			return nil, nil
-		}
-		return []byte("secret"), nil
+	tokenString = strings.Split(tokenString, "Bearer ")[1]
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(JWTKEY), nil
 	})
-
-	//校验错误（基本）
-	//validErr := tokenObj.Valid
-	//if validErr==false {
-	//	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error2"})
-	//	return
-	//}
-
-	finToken := tokenObj.Claims.(jwt.MapClaims)
-	//校验下token是否过期
-	isSucc := finToken.VerifyExpiresAt(time.Now().Unix(),true)
-	if isSucc {
-		ctx.Next()
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: err.Error()})
+		return
 	}
-
-	ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error3"})
+	if !token.Valid {
+		if ve, ok := err.(*jwt.ValidationError); ok {
+			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+				ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "That's not even a token"})
+			} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
+				ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token is expired"})
+			} else {
+				ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token is invalid"})
+			}
+			return
+		}
+		ctx.JSON(&models.Result{Code: 500, Data: nil, Msg: "token error2"})
+		return
+	}
+	ctx.Next()
 	return
 
 }

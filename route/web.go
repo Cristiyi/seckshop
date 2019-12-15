@@ -2,6 +2,7 @@ package route
 
 import (
 	"github.com/kataras/iris/v12"
+	"seckshop/controllers/backend"
 	"seckshop/middleware"
 
 	"github.com/kataras/iris/v12/core/router"
@@ -23,7 +24,7 @@ func Register(api *iris.Application) {
 
 	v1 := api.Party("/v1").AllowMethods(iris.MethodOptions)
 	{
-		//"/front", func(front router.Party
+		//front
 		v1.PartyFunc("/front", func(front router.Party) {
 			front.Post("/login", fronted.Login)
 			front.PartyFunc("/product", func(product router.Party) {
@@ -32,6 +33,15 @@ func Register(api *iris.Application) {
 				product.Post("/detail", fronted.Detail)
 			})
 		})
+
+		//admin
+		v1.PartyFunc("/admin", func(admin router.Party) {
+			admin.PartyFunc("/product", func(product router.Party) {
+				product.Post("/list", backend.ProductList)
+				product.Post("/insert", backend.InsertProduct)
+			})
+		})
+
 	}
 
 }

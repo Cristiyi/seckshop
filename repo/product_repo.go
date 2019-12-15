@@ -36,6 +36,7 @@ func (p productRepository) Insert(m map[string]interface{}) (goodId int64, err e
 	product.ProductName = cast.ToString(m["product_name"])
 	product.ProductNum = cast.ToInt8(m["num"])
 	product.ProductFirstImage = cast.ToString(m["first_image"])
+	product.ProductImages = cast.ToString(m["images"])
 	if cast.ToString(m["product_url"]) != "" {
 		product.ProductUrl = cast.ToString(m["product_url"])
 	}
