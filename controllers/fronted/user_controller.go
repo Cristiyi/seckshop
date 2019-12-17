@@ -10,8 +10,10 @@ package fronted
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/spf13/cast"
 	"seckshop/models"
 	"seckshop/services"
+	"seckshop/utils"
 )
 
 type UserController struct {
@@ -86,5 +88,11 @@ func Login(ctx iris.Context){
 		ctx.JSON(&result)
 		return
 	}
-	_, _ = ctx.JSON(u.Service.CheckLogin(tel, password))
+	userId, res := u.Service.CheckLogin(tel, password)
+	if userId != 0 {
+		session := utils.UserSess.Start(ctx)
+		session.Set("userid", cast.ToInt64(userId))
+		session.Set("xxx", "xxx")
+	}
+	_, _ = ctx.JSON(res)
 }

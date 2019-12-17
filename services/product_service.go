@@ -1,6 +1,10 @@
 package services
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/spf13/cast"
+	"seckshop/datasource"
 	"seckshop/models"
 	"seckshop/repo"
 )
@@ -55,6 +59,11 @@ func (p *productService) GetProduct(productId int64) (result models.Result) {
 	result.Data = product
 	result.Code = 200
 	result.Msg = "执行成功"
+	productJson, _ := json.Marshal(product)
+	rErr := datasource.Redis.HSet("SECKPRODUCT", cast.ToString(product.ID), productJson).Err()
+	if rErr != nil {
+		fmt.Println(rErr)
+	}
 	return
 }
 

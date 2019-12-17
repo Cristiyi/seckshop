@@ -8,7 +8,10 @@ require (
 	github.com/agrison/mxj v0.0.0-20160310142625-1269f8afb3b4 // indirect
 	github.com/bndr/gotabulate v1.1.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-redis/redis v6.15.6+incompatible
+	github.com/go-redis/redis/v7 v7.0.0-beta.4
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gomodule/redigo v1.7.1-0.20190724094224-574c33c3df38
 	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/iris-contrib/formBinder v5.0.0+incompatible // indirect
 	github.com/iris-contrib/middleware/cors v0.0.0-20191111233249-6e1f5f92190e // indirect

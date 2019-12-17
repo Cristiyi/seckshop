@@ -1,10 +1,12 @@
 package fronted
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12"
-	"seckshop/services"
-	"seckshop/models"
 	"github.com/spf13/cast"
+	"seckshop/models"
+	"seckshop/services"
+	"seckshop/utils"
 )
 
 type ProductController struct {
@@ -27,5 +29,15 @@ func Detail(ctx iris.Context) () {
 		return
 	}
 	productId := cast.ToInt64(r.PostFormValue("id"))
+	session := utils.UserSess.Start(ctx)
+	userId, err := session.GetInt64("userid")
+	if err != nil {
+		result.Msg = err.Error()
+		result.Code = 500
+		result.Data = nil
+		ctx.JSON(&result)
+		return
+	}
+	fmt.Println("userid=", userId)
 	_, _ = ctx.JSON(p.Service.GetProduct(productId))
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cast"
 )
 
+
 type ProductRepository interface {
 	List(m map[string]interface{})(total int, products []models.Product)
 	Insert(m map[string]interface{}) (goodId int64, err error)

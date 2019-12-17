@@ -16,7 +16,7 @@ import (
 
 type UserService interface {
 	Insert(m map[string]interface{}) (result models.Result)
-	CheckLogin(tel string, password string) (result models.Result)
+	CheckLogin(tel string, password string) (userId int64, result models.Result)
 }
 
 type userService struct {
@@ -57,19 +57,21 @@ func (s userService) Insert(m map[string]interface{}) (result models.Result) {
 
 }
 
-func (s userService) CheckLogin(tel string, password string) (result models.Result) {
-	isRight, token, msg := s.Repository.CheckLogin(tel, password)
+func (s userService) CheckLogin(tel string, password string) (userId int64, result models.Result) {
+	isRight, data, msg := s.Repository.CheckLogin(tel, password)
 	if !isRight {
+		userId = 0
 		result.Data = nil
 		result.Code = 500
 		result.Msg =  msg
 		return
 	}
 	maps := make(map[string]interface{}, 1)
-	maps["token"] = token
+	maps["user"] = data
 	result.Msg = "登陆成功"
 	result.Code = 200
 	result.Data = maps
+	userId = data.ID
 	return
 
 }

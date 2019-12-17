@@ -19,7 +19,7 @@ import (
 type UserRepo interface {
 	Insert(m map[string]interface{}) (userId int64, err error)
 	CheckTel(tel string) (isReg bool, err error)
-	CheckLogin(tel string, password string) (has bool, token string, msg string)
+	CheckLogin(tel string, password string) (has bool, userData *models.User, msg string)
 }
 
 func NewUserRepo() UserRepo {
@@ -63,7 +63,7 @@ func(u userRepo) CheckTel(tel string) (isReg bool, err error) {
 }
 
 //登录逻辑
-func(u userRepo) CheckLogin(tel string, password string) (has bool, token string, msg string) {
+func(u userRepo) CheckLogin(tel string, password string) (has bool, userData *models.User, msg string) {
 
 	user := new(models.User)
 	has, err := engine.Where("tel=?", tel).Get(user)
@@ -71,16 +71,14 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 		panic("select user error")
 	}
 	if !has {
-		return false, "", "未找到用户"
+		return false, nil, "未找到用户"
 	}
 
 	getPassword := ValidatePassword(password, user.HashPassword);
 	if !getPassword {
-		return false, "", "密码错误，请重新输入"
+		return false, nil, "密码错误，请重新输入"
 	}
-	token, err = middleware.CreateToken(*user)
-	fmt.Println(token)
-	fmt.Println(err)
+	token, err := middleware.CreateToken(*user)
 	if err != nil {
 		panic("token error")
 	}
@@ -92,8 +90,10 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, token string
 	}
 	//middleware.CheckToken(token, "secret")
 	if affected == 0 {
-		return false, "", "登录失败"
+		return false, nil, "登录失败"
 	}
+	userData = user
+	has = true
 	return
 }
 
