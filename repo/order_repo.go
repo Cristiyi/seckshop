@@ -7,3 +7,17 @@
  */
 
 package repo
+
+import _"seckshop/models"
+
+type OrderRepo interface {
+
+}
+
+func NewOrderRepo() OrderRepo {
+	return &orderRepo{}
+}
+
+type orderRepo struct {
+
+}

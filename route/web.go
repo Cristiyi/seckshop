@@ -32,6 +32,11 @@ func Register(api *iris.Application) {
 				product.Use(middleware.ParseToken)
 				product.Post("/detail", fronted.Detail)
 			})
+			front.PartyFunc("/order", func(order router.Party) {
+				//product.Use(middleware.JwtHandler.Serve)
+				order.Use(middleware.ParseToken)
+				order.Post("/seck", fronted.Seck)
+			})
 		})
 
 		//admin

@@ -20,6 +20,7 @@ type UserRepo interface {
 	Insert(m map[string]interface{}) (userId int64, err error)
 	CheckTel(tel string) (isReg bool, err error)
 	CheckLogin(tel string, password string) (has bool, userData *models.User, msg string)
+	GetTokenUser(token string) (user models.User, has bool)
 }
 
 func NewUserRepo() UserRepo {
@@ -94,6 +95,16 @@ func(u userRepo) CheckLogin(tel string, password string) (has bool, userData *mo
 	}
 	userData = user
 	has = true
+	return
+
+}
+
+//根据token获取用户
+func (u userRepo) GetTokenUser(token string) (user models.User, has bool) {
+	has, err := engine.Where("token = ?", token).Get(&user)
+	if err != nil {
+		panic("database err")
+	}
 	return
 }
 
