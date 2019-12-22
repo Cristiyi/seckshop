@@ -1,18 +1,18 @@
 package services
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/spf13/cast"
 	"seckshop/datasource"
 	"seckshop/models"
 	"seckshop/repo"
+	"time"
 )
 
 type ProductService interface {
 	List(m map[string]interface{}) (result models.Result)
 	Insert(m map[string]interface{}) (result models.Result)
 	GetProduct(productId int64) (result models.Result)
+	SetAllSeckCount() models.Result
 }
 
 type productService struct {
@@ -59,11 +59,27 @@ func (p *productService) GetProduct(productId int64) (result models.Result) {
 	result.Data = product
 	result.Code = 200
 	result.Msg = "执行成功"
-	productJson, _ := json.Marshal(product)
-	rErr := datasource.Redis.HSet("SECKPRODUCT", cast.ToString(product.ID), productJson).Err()
+	//productJson, _ := json.Marshal(product)
+	rErr := datasource.Redis.Set("SECKPRODUCT", product.ID, time.Hour*time.Duration(24)).Err()
 	if rErr != nil {
 		fmt.Println(rErr)
 	}
 	return
 }
+
+func (p *productService) SetAllSeckCount() (result models.Result) {
+	re := p.Repository.SetAllSeckCount()
+	//result := models.Result{}
+	if re {
+		result.Data = nil
+		result.Code = 500
+		result.Msg = "操作失败"
+	} else {
+		result.Data = nil
+		result.Code = 200
+		result.Msg = "操作成功"
+	}
+	return result
+}
+
 

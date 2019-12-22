@@ -4,9 +4,9 @@ import (
 	"github.com/kataras/iris/v12"
 	"seckshop/controllers/backend"
 	"seckshop/middleware"
-
 	"github.com/kataras/iris/v12/core/router"
 	"seckshop/controllers/fronted"
+	apiCon "seckshop/controllers/api"
 )
 
 
@@ -28,7 +28,6 @@ func Register(api *iris.Application) {
 		v1.PartyFunc("/front", func(front router.Party) {
 			front.Post("/login", fronted.Login)
 			front.PartyFunc("/product", func(product router.Party) {
-				//product.Use(middleware.JwtHandler.Serve)
 				product.Use(middleware.ParseToken)
 				product.Post("/detail", fronted.Detail)
 			})
@@ -44,6 +43,14 @@ func Register(api *iris.Application) {
 			admin.PartyFunc("/product", func(product router.Party) {
 				product.Post("/list", backend.ProductList)
 				product.Post("/insert", backend.InsertProduct)
+			})
+		})
+
+		//common api
+		//admin
+		v1.PartyFunc("/api", func(api router.Party) {
+			api.PartyFunc("/seck_config", func(seck_config router.Party) {
+				seck_config.Get("/all", apiCon.SetAllSeckCount)
 			})
 		})
 

@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"fmt"
 	"github.com/kataras/iris/v12"
 	"seckshop/conf"
 	"seckshop/models"
@@ -117,7 +116,6 @@ func InsertProduct(ctx iris.Context) {
 	m["product_name"] = productName
 	m["product_num"] = productNum
 	p := NewProductController()
-	fmt.Println(m)
 	_, _ = ctx.JSON(p.Service.Insert(m))
 
 }

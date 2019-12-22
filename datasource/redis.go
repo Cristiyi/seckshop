@@ -2,8 +2,8 @@ package datasource
 
 import (
 	"github.com/go-redis/redis/v7"
-	_"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12"
+	_ "github.com/kataras/iris/v12"
 )
 
 var Redis *redis.Client

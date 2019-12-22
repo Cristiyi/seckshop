@@ -15,7 +15,7 @@ type Order struct {
 	ID				int64 `xorm:"id not null pk autoincr int"`
 	UserId			int64 `xorm:"user_id int index"`
 	ProductId		int64 `xorm:"product_id int index"`
-	ProductNum      int8  `xorm:"product_num int"`
+	ProductNum      int32  `xorm:"product_num int"`
 	OrderPrice      float64 `xorm:"price" decimal(6,2)`
 	OrderStatus		int8  `xorm:"status int index"`
 	CreatedAt		time.Time `xorm:"created"`
