@@ -4,13 +4,14 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/kataras/iris/v12"
 	_ "github.com/kataras/iris/v12"
+	"seckshop/conf"
 )
 
 var Redis *redis.Client
 
 func init() {
 	Redis = redis.NewClient(&redis.Options{
-		Addr:     "122.112.196.78:6379",
+		Addr:     conf.Sysconfig.RedisHost,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})

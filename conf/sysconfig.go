@@ -27,5 +27,5 @@ type sysconfig struct {
 	DBIp   string    `json:"DBIp"`
 	DBPort    string    `json:"DBPort"`
 	DBName string    `json:"DBName"`
-
+	RedisHost string `json:"RedisHost"`
 }
